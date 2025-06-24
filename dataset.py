@@ -14,21 +14,54 @@ class SkinDataset(Dataset):
     applicando le trasformazioni necessarie per il training della GAN.
     Include funzionalità di pulizia automatica per rimuovere file corrotti.
     """
-    def __init__(self, transform=None):
-        self.data_dir = config.DATASET_PATH
+    def __init__(self, dataset_path=None, transform=None):
+        """
+        Inizializza il dataset con path e trasformazioni opzionali.
+        
+        Args:
+            dataset_path: Percorso alla cartella del dataset (default da config)
+            transform: True per trasformazioni standard, o oggetto transforms personalizzato
+        """
+        if dataset_path is None:
+            self.data_dir = config.DATASET_PATH
+        else:
+            self.data_dir = dataset_path
         
         # Filtra solo file PNG validi con dimensione minima
         # Questo aiuta a evitare problemi con file corrotti o incompleti
-        self.image_files = [
-            f for f in os.listdir(self.data_dir) 
-            if f.endswith('.png') and os.path.getsize(os.path.join(self.data_dir, f)) > 100
-        ]
+        # Cerca anche in sottocartelle come professional/
+        self.image_files = []
+        
+        # File PNG nella cartella principale
+        for f in os.listdir(self.data_dir):
+            if f.endswith('.png'):
+                full_path = os.path.join(self.data_dir, f)
+                if os.path.getsize(full_path) > 100:
+                    self.image_files.append(f)
+        
+        # File PNG nelle sottocartelle
+        for subdir in os.listdir(self.data_dir):
+            subdir_path = os.path.join(self.data_dir, subdir)
+            if os.path.isdir(subdir_path):
+                for f in os.listdir(subdir_path):
+                    if f.endswith('.png'):
+                        full_path = os.path.join(subdir_path, f)
+                        if os.path.getsize(full_path) > 100:
+                            # Usa path relativo dalla cartella principale
+                            relative_path = os.path.join(subdir, f)
+                            self.image_files.append(relative_path)
         
         # Configurazione delle trasformazioni per preprocessing
-        if transform:
+        if transform is True:
+            # Trasformazione standard se transform=True
+            self.transform = transforms.Compose([
+                transforms.ToTensor(),
+            ])
+        elif transform is not None:
+            # Oggetto transform personalizzato
             self.transform = transform
         else:
-            # Trasformazione standard: converte PIL in Tensor normalizzato [0,1]
+            # Trasformazione di default: converte PIL in Tensor normalizzato [0,1]
             self.transform = transforms.Compose([
                 transforms.ToTensor(),
             ])
