@@ -146,8 +146,8 @@ class MinecraftSkinAI:
     
     def __init__(self, data_dir="./skin_dataset"):
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        print(f"🎮 Inizializzando Minecraft Skin AI Generator")
-        print(f"📱 Device: {self.device}")
+        print(f"Inizializzando Minecraft Skin AI Generator")
+        print(f"Device: {self.device}")
         
         self.data_dir = data_dir
         self.latent_dim = 128
@@ -192,12 +192,12 @@ class MinecraftSkinAI:
         # Carica modelli pre-addestrati se esistono
         self.load_models()
         
-        print(f"📊 Dataset attuale: {len(self.dataset)} skin")
-        print(f"🎨 Temi disponibili: {list(self.themes.keys())}")
+        print(f"Dataset attuale: {len(self.dataset)} skin")
+        print(f"Temi disponibili: {list(self.themes.keys())}")
         
         # Auto-addestramento se necessario
         if not self.is_trained and len(self.dataset) >= 50:
-            print(f"🤖 Avvio training automatico su {len(self.dataset)} skin...")
+            print(f"Avvio training automatico su {len(self.dataset)} skin...")
             import threading
             def auto_train():
                 try:
@@ -302,7 +302,7 @@ class MinecraftSkinAI:
     def generate_skin(self, theme='random', seed=None):
         """Genera una nuova skin utilizzando l'AI"""
         if not self.is_trained and len(self.dataset) >= 50:
-            print("🤖 Avvio training immediato...")
+            print("Avvio training immediato...")
             self.train(epochs=80, batch_size=8)
         
         self.generator.eval()
@@ -336,10 +336,10 @@ class MinecraftSkinAI:
     
     def generate_fusion_skin(self, fusion_method='intelligent', num_samples=20):
         """Genera una skin che combina tutti i dati del dataset"""
-        print(f"🔥 Generando FUSION SKIN da {len(self.dataset)} skin totali...")
+        print(f"Generando FUSION SKIN da {len(self.dataset)} skin totali...")
         
         if len(self.dataset) == 0:
-            print("❌ Dataset vuoto!")
+            print("ERRORE: Dataset vuoto!")
             return None, "empty"
         
         # Campiona diverse skin dal dataset in modo sicuro
@@ -372,7 +372,7 @@ class MinecraftSkinAI:
     
     def _intelligent_fusion(self, skins):
         """Fusione intelligente che preserva le caratteristiche migliori"""
-        print("🧠 Applicando fusione intelligente...")
+        print("Applicando fusione intelligente...")
         
         # Inizia con una skin di base
         base_skin = skins[0].copy()
@@ -409,7 +409,7 @@ class MinecraftSkinAI:
     
     def _average_fusion(self, skins):
         """Media pesata di tutte le skin"""
-        print("📊 Applicando media pesata...")
+        print("Applicando media pesata...")
         
         # Converti in float per calcoli
         skin_arrays = [skin.astype(np.float32) for skin in skins]
@@ -426,7 +426,7 @@ class MinecraftSkinAI:
     
     def _mosaic_fusion(self, skins):
         """Crea un mosaico usando parti di skin diverse"""
-        print("🎨 Creando mosaico fusion...")
+        print("Creando mosaico fusion...")
         
         result = np.zeros((64, 64, 4), dtype=np.uint8)
         
@@ -450,7 +450,7 @@ class MinecraftSkinAI:
     
     def _advanced_blend(self, skins):
         """Blend avanzato con preservazione delle caratteristiche"""
-        print("⚡ Applicando blend avanzato...")
+        print("Applicando blend avanzato...")
         
         # Inizia con la prima skin
         result = skins[0].astype(np.float32)
@@ -497,7 +497,7 @@ class MinecraftSkinAI:
         }
         
         torch.save(checkpoint, './models/minecraft_skin_gan.pth')
-        print("💾 Modelli salvati in ./models/minecraft_skin_gan.pth")
+        print("Modelli salvati in ./models/minecraft_skin_gan.pth")
     
     def load_models(self):
         """Carica modelli pre-addestrati"""
@@ -513,10 +513,10 @@ class MinecraftSkinAI:
                 self.training_losses = checkpoint.get('training_losses', {'generator': [], 'discriminator': []})
                 self.is_trained = checkpoint.get('is_trained', False)
                 
-                print("✅ Modelli pre-addestrati caricati con successo!")
+                print("SUCCESSO: Modelli pre-addestrati caricati con successo!")
                 
             except Exception as e:
-                print(f"⚠️ Errore caricando modelli: {e}")
+                print(f"ERRORE caricando modelli: {e}")
     
     def skin_to_base64(self, skin_array):
         """Converte array numpy in base64"""
@@ -526,9 +526,230 @@ class MinecraftSkinAI:
         buffer.seek(0)
         return base64.b64encode(buffer.getvalue()).decode()
 
+    def generate_intelligent_hybrid_skin(self):
+        """Genera una skin combinando AI e FUSION in modo intelligente"""
+        print("Avvio algoritmo di generazione ibrida intelligente...")
+        
+        # Seleziona strategia di generazione basata su casualità pesata
+        strategy_weights = {
+            'ai_pure': 0.3,                    # 30% AI pura
+            'ai_enhanced_fusion': 0.25,        # 25% AI + miglioramenti FUSION  
+            'multi_fusion_blend': 0.25,        # 25% Multi-FUSION blend
+            'evolutionary_fusion': 0.2         # 20% FUSION evolutiva
+        }
+        
+        # Scelta strategia
+        strategies = list(strategy_weights.keys())
+        weights = list(strategy_weights.values())
+        chosen_strategy = np.random.choice(strategies, p=weights)
+        
+        print(f"Strategia selezionata: {chosen_strategy}")
+        
+        # Genera seed unico basato su timestamp per garantire variabilità
+        unique_seed = int(datetime.now().timestamp() * 1000000) % 2147483647
+        np.random.seed(unique_seed)
+        torch.manual_seed(unique_seed)
+        
+        if chosen_strategy == 'ai_pure' and self.is_trained:
+            return self._generate_ai_pure_variable()
+        elif chosen_strategy == 'ai_enhanced_fusion':
+            return self._generate_ai_enhanced_fusion()
+        elif chosen_strategy == 'multi_fusion_blend':
+            return self._generate_multi_fusion_blend()
+        else:  # evolutionary_fusion
+            return self._generate_evolutionary_fusion()
+    
+    def _generate_ai_pure_variable(self):
+        """Genera skin AI pura con alta variabilità"""
+        print("Generazione AI pura con alta variabilità...")
+        
+        # Usa parametri casuali per massima variabilità
+        theme_variations = ['random', 'warrior', 'mage', 'nature', 'tech', 'shadow']
+        selected_theme = np.random.choice(theme_variations)
+        
+        # Genera con seed variabile
+        skin_array, theme = self.generate_skin(selected_theme)
+        return skin_array, f"AI_VARIABLE_{theme}"
+    
+    def _generate_ai_enhanced_fusion(self):
+        """Combina AI con elementi FUSION per risultati unici"""
+        print("Generazione AI potenziata con elementi FUSION...")
+        
+        try:
+            # Genera base AI se possibile
+            if self.is_trained:
+                base_skin, ai_theme = self.generate_skin('random')
+            else:
+                # Fallback a FUSION se AI non disponibile
+                base_skin, _ = self.generate_fusion_skin('intelligent', 15)
+                ai_theme = 'fusion_base'
+            
+            # Genera elementi FUSION da aggiungere
+            fusion_skin, _ = self.generate_fusion_skin('mosaic', 
+                                                      np.random.randint(8, 25))
+            
+            # Combina AI base con elementi FUSION usando blend intelligente
+            final_skin = self._intelligent_blend(base_skin, fusion_skin)
+            
+            return final_skin, f"AI_ENHANCED_{ai_theme}_with_fusion"
+            
+        except Exception as e:
+            print(f"Errore in AI enhanced fusion: {e}")
+            # Fallback sicuro
+            return self.generate_fusion_skin('intelligent', 20)
+    
+    def _generate_multi_fusion_blend(self):
+        """Combina multiple strategie FUSION per risultati complessi"""
+        print("Generazione multi-FUSION blend...")
+        
+        # Genera multiple skin FUSION con metodi diversi
+        fusion_methods = ['intelligent', 'average', 'mosaic', 'advanced']
+        fusion_results = []
+        
+        for method in fusion_methods:
+            skin_data, _ = self.generate_fusion_skin(
+                method, 
+                np.random.randint(5, 15)
+            )
+            if skin_data is not None:
+                fusion_results.append(skin_data)
+        
+        if len(fusion_results) < 2:
+            # Fallback se non abbastanza risultati
+            return self.generate_fusion_skin('intelligent', 25)
+        
+        # Combina i risultati con algoritmo avanzato
+        final_skin = self._advanced_multi_blend(fusion_results)
+        return final_skin, f"MULTI_FUSION_BLEND_{len(fusion_results)}methods"
+    
+    def _generate_evolutionary_fusion(self):
+        """Simula evoluzione genetica per skin uniche"""
+        print("Generazione FUSION evolutiva...")
+        
+        # Genera popolazione iniziale
+        population_size = np.random.randint(6, 12)
+        population = []
+        
+        for _ in range(population_size):
+            method = np.random.choice(['intelligent', 'average', 'mosaic', 'advanced'])
+            samples = np.random.randint(3, 20)
+            skin_data, _ = self.generate_fusion_skin(method, samples)
+            if skin_data is not None:
+                population.append(skin_data)
+        
+        if len(population) < 3:
+            return self.generate_fusion_skin('advanced', 30)
+        
+        # Simula "evoluzione" combinando le migliori caratteristiche
+        evolved_skin = self._evolutionary_combination(population)
+        return evolved_skin, f"EVOLUTIONARY_FUSION_gen{len(population)}"
+    
+    def _intelligent_blend(self, skin1, skin2):
+        """Blend intelligente tra due skin"""
+        # Blend diversificato per regioni
+        result = skin1.copy().astype(np.float32)
+        skin2_float = skin2.astype(np.float32)
+        
+        # Regioni con blend diversi
+        regions = [
+            ((0, 0, 32, 16), 0.4),      # Testa - blend leggero
+            ((0, 16, 56, 32), 0.6),     # Corpo - blend medio
+            ((0, 32, 64, 64), 0.3),     # Gambe - blend leggero
+        ]
+        
+        for (x1, y1, x2, y2), alpha in regions:
+            region_blend = alpha * skin2_float[y1:y2, x1:x2] + (1-alpha) * result[y1:y2, x1:x2]
+            result[y1:y2, x1:x2] = region_blend
+        
+        return np.clip(result, 0, 255).astype(np.uint8)
+    
+    def _advanced_multi_blend(self, skins):
+        """Blend avanzato di multiple skin"""
+        if len(skins) == 0:
+            return np.zeros((64, 64, 4), dtype=np.uint8)
+        
+        result = skins[0].astype(np.float32)
+        
+        for i, skin in enumerate(skins[1:]):
+            # Peso decrescente per ogni skin aggiuntiva
+            weight = 0.5 / (i + 1)
+            result = weight * skin.astype(np.float32) + (1-weight) * result
+        
+        return np.clip(result, 0, 255).astype(np.uint8)
+    
+    def _evolutionary_combination(self, population):
+        """Combina popolazione usando principi evolutivi"""
+        # Seleziona "genitori" migliori (casuali per ora)
+        np.random.shuffle(population)
+        parents = population[:3]
+        
+        # Crossover: combina caratteristiche dei genitori
+        result = parents[0].astype(np.float32)
+        
+        # Eredita caratteristiche da altri genitori
+        for y in range(0, 64, 8):
+            for x in range(0, 64, 8):
+                parent_idx = np.random.randint(0, len(parents))
+                parent_region = parents[parent_idx][y:y+8, x:x+8]
+                
+                # Mutation: aggiungi variabilità
+                mutation_factor = 0.9 + np.random.random() * 0.2  # 0.9-1.1
+                mutated_region = parent_region.astype(np.float32) * mutation_factor
+                
+                result[y:y+8, x:x+8] = mutated_region
+        
+        return np.clip(result, 0, 255).astype(np.uint8)
+
+
+
 # Istanza globale del sistema AI
-print("🎮 Inizializzando Minecraft Skin AI...")
+print("Inizializzando Minecraft Skin AI...")
 ai_generator = MinecraftSkinAI()
+
+# === GENERAZIONE AUTOMATICA ALL'AVVIO ===
+def generate_startup_skin():
+    """Genera automaticamente una skin intelligente all'avvio del programma"""
+    try:
+        print("\n=== GENERAZIONE AUTOMATICA INTELLIGENTE ALL'AVVIO ===")
+        
+        # Controlla se abbiamo skin nel dataset
+        if len(ai_generator.dataset) == 0:
+            print("ATTENZIONE: Nessuna skin trovata nel dataset! Impossibile generare skin.")
+            return
+            
+        print(f"Dataset caricato: {len(ai_generator.dataset)} skin")
+        print(f"Modello addestrato: {'Si' if ai_generator.is_trained else 'No'}")
+        
+        # Crea directory per le skin generate se non esiste
+        os.makedirs('downloaded_skins', exist_ok=True)
+        
+        # Usa sempre il generatore intelligente ibrido
+        print("Avvio generazione intelligente ibrida...")
+        skin_array, method_info = ai_generator.generate_intelligent_hybrid_skin()
+        
+        if skin_array is not None:
+            # Crea nome file con timestamp
+            timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+            skin_id = np.random.randint(1000, 9999)
+            filename = f"minecraft_skin_INTELLIGENT-{timestamp}-{skin_id}_{method_info}.png"
+            
+            # Salva la skin
+            img = Image.fromarray(skin_array, 'RGBA')
+            filepath = os.path.join('downloaded_skins', filename)
+            img.save(filepath)
+            
+            print(f"SUCCESSO: Skin intelligente generata: {filename}")
+            print(f"Percorso: {filepath}")
+            print(f"Metodo: {method_info}")
+            print("=" * 60)
+        else:
+            print("ERRORE: Impossibile generare skin intelligente")
+            
+    except Exception as e:
+        print(f"ERRORE durante generazione automatica: {e}")
+
+# Esegui generazione automatica all'avvio
+generate_startup_skin()
 
 # === FLASK ENDPOINTS ===
 
@@ -573,7 +794,7 @@ def generate_fusion():
         fusion_method = request.args.get('method', 'intelligent')  # intelligent, average, mosaic, advanced
         num_samples = int(request.args.get('samples', 20))  # Numero di skin da campionare
         
-        print(f"🔥 Richiesta FUSION SKIN - Metodo: {fusion_method}, Campioni: {num_samples}")
+        print(f"Richiesta FUSION SKIN - Metodo: {fusion_method}, Campioni: {num_samples}")
         
         # Genera la FUSION skin
         skin_array, fusion_info = ai_generator.generate_fusion_skin(
@@ -600,7 +821,7 @@ def generate_fusion():
         os.makedirs('downloaded_skins', exist_ok=True)
         local_path = os.path.join('downloaded_skins', filename)
         img.save(local_path)
-        print(f"💾 FUSION SKIN salvata: {filename}")
+        print(f"FUSION SKIN salvata: {filename}")
         
         # Restituisci file per download
         return send_file(
@@ -643,25 +864,25 @@ def fusion_methods():
     return jsonify({
         'available_methods': {
             'intelligent': {
-                'name': '🧠 Fusione Intelligente',
+                'name': 'Fusione Intelligente',
                 'description': 'Combina regioni specifiche (testa, corpo, braccia) da skin diverse in modo anatomicamente corretto',
                 'best_for': 'Skin bilanciate e realistiche',
                 'parameters': 'Preserva struttura anatomica'
             },
             'average': {
-                'name': '📊 Media Pesata',
+                'name': 'Media Pesata',
                 'description': 'Media pesata di tutte le skin campionate con priorità decrescente',
                 'best_for': 'Colori e texture omogenei',
                 'parameters': 'Risultato uniforme e bilanciato'
             },
             'mosaic': {
-                'name': '🎨 Mosaico',
+                'name': 'Mosaico',
                 'description': 'Crea blocchi 8x8 da skin diverse con algoritmo di smoothing avanzato',
                 'best_for': 'Effetti artistici e pattern unici',
                 'parameters': 'Texture frammentata creativa'
             },
             'advanced': {
-                'name': '⚡ Blend Avanzato',
+                'name': 'Blend Avanzato',
                 'description': 'Usa blend modes professionali (multiply, overlay, soft light, color dodge)',
                 'best_for': 'Effetti fotografici e artistici',
                 'parameters': 'Blend modes cinematografici'
@@ -686,6 +907,194 @@ def fusion_methods():
             'max_samples': min(50, len(ai_generator.dataset))
         }
     })
+
+# === NUOVO METODO DI GENERAZIONE INTELLIGENTE ===
+def add_intelligent_hybrid_generator():
+    """Aggiunge il metodo di generazione ibrida intelligente alla classe MinecraftSkinAI"""
+    
+    def generate_intelligent_hybrid_skin(self):
+        """Genera una skin combinando AI e FUSION in modo intelligente"""
+        print("Avvio algoritmo di generazione ibrida intelligente...")
+        
+        # Seleziona strategia di generazione basata su casualità pesata
+        strategy_weights = {
+            'ai_pure': 0.3,                    # 30% AI pura
+            'ai_enhanced_fusion': 0.25,        # 25% AI + miglioramenti FUSION  
+            'multi_fusion_blend': 0.25,        # 25% Multi-FUSION blend
+            'evolutionary_fusion': 0.2         # 20% FUSION evolutiva
+        }
+        
+        # Scelta strategia
+        strategies = list(strategy_weights.keys())
+        weights = list(strategy_weights.values())
+        chosen_strategy = np.random.choice(strategies, p=weights)
+        
+        print(f"Strategia selezionata: {chosen_strategy}")
+        
+        # Genera seed unico basato su timestamp per garantire variabilità
+        unique_seed = int(datetime.now().timestamp() * 1000000) % 2147483647
+        np.random.seed(unique_seed)
+        torch.manual_seed(unique_seed)
+        
+        if chosen_strategy == 'ai_pure' and self.is_trained:
+            return self._generate_ai_pure_variable()
+        elif chosen_strategy == 'ai_enhanced_fusion':
+            return self._generate_ai_enhanced_fusion()
+        elif chosen_strategy == 'multi_fusion_blend':
+            return self._generate_multi_fusion_blend()
+        else:  # evolutionary_fusion
+            return self._generate_evolutionary_fusion()
+    
+    def _generate_ai_pure_variable(self):
+        """Genera skin AI pura con alta variabilità"""
+        print("Generazione AI pura con alta variabilità...")
+        
+        # Usa parametri casuali per massima variabilità
+        theme_variations = ['random', 'warrior', 'mage', 'nature', 'tech', 'shadow']
+        selected_theme = np.random.choice(theme_variations)
+        
+        # Genera con seed variabile
+        skin_array, theme = self.generate_skin(selected_theme)
+        return skin_array, f"AI_VARIABLE_{theme}"
+    
+    def _generate_ai_enhanced_fusion(self):
+        """Combina AI con elementi FUSION per risultati unici"""
+        print("Generazione AI potenziata con elementi FUSION...")
+        
+        try:
+            # Genera base AI se possibile
+            if self.is_trained:
+                base_skin, ai_theme = self.generate_skin('random')
+            else:
+                # Fallback a FUSION se AI non disponibile
+                base_skin, _ = self.generate_fusion_skin('intelligent', 15)
+                ai_theme = 'fusion_base'
+            
+            # Genera elementi FUSION da aggiungere
+            fusion_skin, _ = self.generate_fusion_skin('mosaic', 
+                                                      np.random.randint(8, 25))
+            
+            # Combina AI base con elementi FUSION usando blend intelligente
+            final_skin = self._intelligent_blend(base_skin, fusion_skin)
+            
+            return final_skin, f"AI_ENHANCED_{ai_theme}_with_fusion"
+            
+        except Exception as e:
+            print(f"Errore in AI enhanced fusion: {e}")
+            # Fallback sicuro
+            return self.generate_fusion_skin('intelligent', 20)
+    
+    def _generate_multi_fusion_blend(self):
+        """Combina multiple strategie FUSION per risultati complessi"""
+        print("Generazione multi-FUSION blend...")
+        
+        # Genera multiple skin FUSION con metodi diversi
+        fusion_methods = ['intelligent', 'average', 'mosaic', 'advanced']
+        fusion_results = []
+        
+        for method in fusion_methods:
+            skin_data, _ = self.generate_fusion_skin(
+                method, 
+                np.random.randint(5, 15)
+            )
+            if skin_data is not None:
+                fusion_results.append(skin_data)
+        
+        if len(fusion_results) < 2:
+            # Fallback se non abbastanza risultati
+            return self.generate_fusion_skin('intelligent', 25)
+        
+        # Combina i risultati con algoritmo avanzato
+        final_skin = self._advanced_multi_blend(fusion_results)
+        return final_skin, f"MULTI_FUSION_BLEND_{len(fusion_results)}methods"
+    
+    def _generate_evolutionary_fusion(self):
+        """Simula evoluzione genetica per skin uniche"""
+        print("Generazione FUSION evolutiva...")
+        
+        # Genera popolazione iniziale
+        population_size = np.random.randint(6, 12)
+        population = []
+        
+        for _ in range(population_size):
+            method = np.random.choice(['intelligent', 'average', 'mosaic', 'advanced'])
+            samples = np.random.randint(3, 20)
+            skin_data, _ = self.generate_fusion_skin(method, samples)
+            if skin_data is not None:
+                population.append(skin_data)
+        
+        if len(population) < 3:
+            return self.generate_fusion_skin('advanced', 30)
+        
+        # Simula "evoluzione" combinando le migliori caratteristiche
+        evolved_skin = self._evolutionary_combination(population)
+        return evolved_skin, f"EVOLUTIONARY_FUSION_gen{len(population)}"
+    
+    def _intelligent_blend(self, skin1, skin2):
+        """Blend intelligente tra due skin"""
+        # Blend diversificato per regioni
+        result = skin1.copy().astype(np.float32)
+        skin2_float = skin2.astype(np.float32)
+        
+        # Regioni con blend diversi
+        regions = [
+            ((0, 0, 32, 16), 0.4),      # Testa - blend leggero
+            ((0, 16, 56, 32), 0.6),     # Corpo - blend medio
+            ((0, 32, 64, 64), 0.3),     # Gambe - blend leggero
+        ]
+        
+        for (x1, y1, x2, y2), alpha in regions:
+            region_blend = alpha * skin2_float[y1:y2, x1:x2] + (1-alpha) * result[y1:y2, x1:x2]
+            result[y1:y2, x1:x2] = region_blend
+        
+        return np.clip(result, 0, 255).astype(np.uint8)
+    
+    def _advanced_multi_blend(self, skins):
+        """Blend avanzato di multiple skin"""
+        if len(skins) == 0:
+            return np.zeros((64, 64, 4), dtype=np.uint8)
+        
+        result = skins[0].astype(np.float32)
+        
+        for i, skin in enumerate(skins[1:]):
+            # Peso decrescente per ogni skin aggiuntiva
+            weight = 0.5 / (i + 1)
+            result = weight * skin.astype(np.float32) + (1-weight) * result
+        
+        return np.clip(result, 0, 255).astype(np.uint8)
+    
+    def _evolutionary_combination(self, population):
+        """Combina popolazione usando principi evolutivi"""
+        # Seleziona "genitori" migliori (casuali per ora)
+        np.random.shuffle(population)
+        parents = population[:3]
+        
+        # Crossover: combina caratteristiche dei genitori
+        result = parents[0].astype(np.float32)
+        
+        # Eredita caratteristiche da altri genitori
+        for y in range(0, 64, 8):
+            for x in range(0, 64, 8):
+                parent_idx = np.random.randint(0, len(parents))
+                parent_region = parents[parent_idx][y:y+8, x:x+8]
+                
+                # Mutation: aggiungi variabilità
+                mutation_factor = 0.9 + np.random.random() * 0.2  # 0.9-1.1
+                mutated_region = parent_region.astype(np.float32) * mutation_factor
+                
+                result[y:y+8, x:x+8] = mutated_region
+        
+        return np.clip(result, 0, 255).astype(np.uint8)
+    
+    # Aggiungi i metodi alla classe
+    MinecraftSkinAI.generate_intelligent_hybrid_skin = generate_intelligent_hybrid_skin
+    MinecraftSkinAI._generate_ai_pure_variable = _generate_ai_pure_variable
+    MinecraftSkinAI._generate_ai_enhanced_fusion = _generate_ai_enhanced_fusion
+    MinecraftSkinAI._generate_multi_fusion_blend = _generate_multi_fusion_blend
+    MinecraftSkinAI._generate_evolutionary_fusion = _generate_evolutionary_fusion
+    MinecraftSkinAI._intelligent_blend = _intelligent_blend
+    MinecraftSkinAI._advanced_multi_blend = _advanced_multi_blend
+    MinecraftSkinAI._evolutionary_combination = _evolutionary_combination
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000) 
