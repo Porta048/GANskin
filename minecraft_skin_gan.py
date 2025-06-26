@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Sistema GAN Semplificato per Generazione Skin Minecraft
-Approccio minimalista ma efficace per risultati migliori
+Sistema GAN 
+
 """
 
 import torch
