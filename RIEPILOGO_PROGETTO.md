@@ -1,49 +1,49 @@
-# Riepilogo del Progetto: Sistema di Generazione Skin per Minecraft
+# Project Summary: Minecraft Skin Generation System
 
-Questo documento riassume le fasi di sviluppo, debug e ottimizzazione di un sistema basato su Generative Adversarial Networks (GAN) per la creazione di skin per Minecraft.
+This document summarizes the development, debugging, and optimization phases of a Generative Adversarial Networks (GAN) based system for creating Minecraft skins.
 
-## 1. Fase Iniziale: Analisi e Primo Intervento
+## 1. Initial Phase: Analysis and First Intervention
 
-Il progetto è iniziato con l'analisi di un sistema GAN esistente che produceva skin di bassa qualità. La diagnosi iniziale ha indicato che il modello in uso era sperimentale e non sufficientemente addestrato.
+The project began with the analysis of an existing GAN system that was producing low-quality skins. Initial diagnosis indicated that the model in use was experimental and insufficiently trained.
 
-Il primo tentativo di soluzione ha comportato il ripristino di uno script di training (`train_optimal.py`) che implementava un'architettura più avanzata e utilizzava pesi EMA (Exponential Moving Average) per migliorare la stabilità del generatore.
+The first solution attempt involved restoring a training script (`train_optimal.py`) that implemented a more advanced architecture and used EMA (Exponential Moving Average) weights to improve generator stability.
 
-## 2. Debug e Correzione Iterativa
+## 2. Debugging and Iterative Correction
 
-Il passaggio al nuovo script ha introdotto una serie di problemi tecnici che sono stati risolti in modo incrementale:
+The transition to the new script introduced a series of technical problems that were solved incrementally:
 
-- **Errore di Training:** È stato corretto un `ValueError` che interrompeva il processo di addestramento.
-- **Gestione dei Pesi EMA:** È stato risolto un bug critico (`Missing key(s) in state_dict`) che impediva il corretto caricamento dei pesi del modello EMA. Il problema risiedeva nel salvataggio parziale dello stato del modello, che è stato corretto per includere l'intero `state_dict`.
-- **Conflitto di Architetture:** È stata risolta un'incompatibilità derivante dalla coesistenza di due definizioni di modello diverse (`models.py` e `stable_models.py`).
+- **Training Error:** A `ValueError` that interrupted the training process was corrected.
+- **EMA Weight Management:** A critical bug (`Missing key(s) in state_dict`) that prevented proper loading of EMA model weights was resolved. The problem lay in partial model state saving, which was corrected to include the entire `state_dict`.
+- **Architecture Conflict:** An incompatibility arising from the coexistence of two different model definitions (`models.py` and `stable_models.py`) was resolved.
 
-## 3. Implementazione di Best Practice
+## 3. Best Practices Implementation
 
-Guidati da diagnosi precise, sono state introdotte diverse migliorie per professionalizzare il sistema:
+Guided by precise diagnostics, several improvements were introduced to professionalize the system:
 
-- **Valutazione e Dataset:** La metrica di valutazione della qualità è stata resa più flessibile e il caricatore del dataset è stato reso più robusto per gestire file corrotti o malformati.
-- **Loss Function:** L'architettura del discriminatore (un "critico") è stata allineata con una loss function più appropriata (WGAN-GP) per migliorare la stabilità del training.
-- **Salvataggio e Validazione:** È stata implementata una strategia di salvataggio con checkpoint incrementali e un set di dati di validazione per monitorare visivamente l'evoluzione del modello e prevenire l'overfitting.
-- **Iperparametri:** Il `batch_size` è stato aumentato a 64 per stabilizzare ulteriormente il training.
+- **Evaluation and Dataset:** The quality evaluation metric was made more flexible and the dataset loader was made more robust to handle corrupted or malformed files.
+- **Loss Function:** The discriminator architecture (a "critic") was aligned with a more appropriate loss function (WGAN-GP) to improve training stability.
+- **Saving and Validation:** A saving strategy with incremental checkpoints and a validation dataset was implemented to visually monitor model evolution and prevent overfitting.
+- **Hyperparameters:** The `batch_size` was increased to 64 to further stabilize training.
 
-## 4. Collasso Modale e Reset Strategico
+## 4. Mode Collapse and Strategic Reset
 
-Nonostante le migliorie, il modello avanzato ha manifestato un grave collasso modale, un problema comune nelle GAN dove il generatore produce output non variati (in questo caso, rumore).
+Despite the improvements, the advanced model exhibited severe mode collapse, a common problem in GANs where the generator produces non-varied outputs (in this case, noise).
 
-Per superare questo ostacolo, è stata presa la decisione di effettuare un reset strategico:
+To overcome this obstacle, the decision was made to perform a strategic reset:
 
-1.  Ritorno alla Semplicità: Si è abbandonata l'architettura complessa in favore di un modello DCGAN (Deep Convolutional GAN), più semplice ma noto per la sua robustezza.
-2.  Training Esteso: Il numero di epoche di addestramento è stato aumentato a 200 per consentire al modello più semplice di apprendere le caratteristiche del dataset in modo più approfondito.
+1. Return to Simplicity: The complex architecture was abandoned in favor of a DCGAN (Deep Convolutional GAN) model, simpler but known for its robustness.
+2. Extended Training: The number of training epochs was increased to 200 to allow the simpler model to learn dataset features more thoroughly.
 
-Questo approccio si è rivelato vincente, portando alla generazione di skin di alta qualità con punteggi di valutazione superiori a 9.0/10.
+This approach proved successful, leading to the generation of high-quality skins with validation scores above 9.0/10.
 
-## 5. Fase Finale: Pulizia e Sistema Unificato
+## 5. Final Phase: Cleanup and Unified System
 
-A seguito del successo, il workspace è stato ripulito da tutti gli script e file non più necessari.
+Following the success, the workspace was cleaned of all unnecessary scripts and files.
 
-È stato creato un nuovo sistema di training unificato in un singolo file (`minecraft_skin_gan.py`), basato su codice fornito. Dopo aver preparato un nuovo dataset di skin scaricato da GitHub, lo script finale è stato ulteriormente perfezionato integrando le lezioni apprese durante l'intero processo:
+A new unified training system was created in a single file (`minecraft_skin_gan.py`), based on provided code. After preparing a new skin dataset downloaded from GitHub, the final script was further refined by integrating lessons learned throughout the entire process:
 
-- **Ottimizzatore:** Utilizzo di AdamW.
-- **Learning Rate:** Tassi di apprendimento differenziati per generatore e discriminatore.
-- **Regolarizzazione:** Aggiunta di label smoothing.
+- **Optimizer:** Use of AdamW.
+- **Learning Rate:** Differentiated learning rates for generator and discriminator.
+- **Regularization:** Addition of label smoothing.
 
-Questo ha permesso di stabilire una pipeline di training di alta qualità, pronta per essere eseguita sul nuovo e più vasto set di dati. 
+This allowed the establishment of a high-quality training pipeline, ready to be executed on the new and larger dataset. 
